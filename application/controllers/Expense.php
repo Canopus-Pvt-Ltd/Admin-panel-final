@@ -75,7 +75,14 @@ class Expense extends CI_Controller {
             ];
             $this->Expense_model->add_expense($data);
             $this->session->set_flashdata('success', 'Expense added successfully');
-            redirect('expense/add');
+            // Redirect back with project context preserved so the project stays pre-selected
+            $redirect_project_name = $this->input->post('project_name');
+            $redirect_project_code = $this->input->post('project_code');
+            if ($redirect_project_name && $redirect_project_code) {
+                redirect('expense/add?project_name=' . urlencode($redirect_project_name) . '&project_code=' . urlencode($redirect_project_code));
+            } else {
+                redirect('expense/add');
+            }
         }
         $this->load->model('Project_model');
         $projects = $this->Project_model->get_projects(1000, 0); // fetch all for dropdown, adjust limit as needed
